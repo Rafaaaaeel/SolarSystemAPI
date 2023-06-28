@@ -7,11 +7,22 @@ async function filterPlanets(data) { return data.bodies.filter(x => x.isPlanet =
 
 router.get('/', async (req, res) => {
     try {
-
+        var response = []
         const result = await axios.get(apiURL)
         const planets = await filterPlanets(result.data)
-
-        res.status(200).send({results: planets, total: planets.length})
+        planets.map( async x => {
+            var testJson = {
+                name: x.englishName,
+                moons: x.moons,
+                gravity: x.gravity,
+                discoveredBy: x.discoveredBy,
+                discoveryDate: x.discoveryDate,
+                avgTemp: x.avgTemp
+            }
+            response.push(testJson)
+        })
+        await Promise.all(response)
+        res.status(200).send({results: response, total: response.length})
     } catch (error) {
         res.status(500)
     }    
@@ -28,7 +39,7 @@ router.get('/all', async (req, res) => {
 
 router.get('/:name', getPlanet, getMoons, async (req, res) => {
     try {
-        const test = {
+        const response = {
             name: res.planet.englishName,
             moons: res.moons,
             gravity: res.planet.gravity,
@@ -36,7 +47,7 @@ router.get('/:name', getPlanet, getMoons, async (req, res) => {
             discoveryDate: res.planet.discoveryDate,
             avgTemp: res.planet.avgTemp
         }
-        res.send(test)
+        res.send(response)
     } catch (error) {
         res.status(500)
     }
