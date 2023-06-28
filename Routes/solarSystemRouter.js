@@ -10,16 +10,16 @@ router.get('/', async (req, res) => {
         var response = []
         const result = await axios.get(apiURL)
         const planets = await filterPlanets(result.data)
-        planets.map( async x => {
-            var testJson = {
-                name: x.englishName,
-                moons: x.moons,
-                gravity: x.gravity,
-                discoveredBy: x.discoveredBy,
-                discoveryDate: x.discoveryDate,
-                avgTemp: x.avgTemp
+        planets.map( async planet => {
+            var planetJsonFormat = {
+                name: planet.englishName,
+                moons: planet.moons,
+                gravity: planet.gravity,
+                discoveredBy: planet.discoveredBy,
+                discoveryDate: planet.discoveryDate,
+                avgTemp: planet.avgTemp
             }
-            response.push(testJson)
+            response.push(planetJsonFormat)
         })
         await Promise.all(response)
         res.status(200).send({results: response, total: response.length})
